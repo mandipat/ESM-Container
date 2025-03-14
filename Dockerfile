@@ -18,14 +18,12 @@ WORKDIR /opt/ml/code
 
 RUN pip install flask torch
 
-COPY inference.py /opt/ml/code/inference.py
+COPY inference_copy.py /opt/ml/code/inference.py
 
 # Copy both model files (main model & regression weights) to the correct directory
 COPY esm2_t12_35M_UR50D.pt /opt/ml/model/esm2_t12_35M_UR50D.pt
 COPY esm2_t12_35M_UR50D-contact-regression.pt /opt/ml/model/esm2_t12_35M_UR50D-contact-regression.pt
 
-
-# Set SageMaker-specific environment variable
 ENV SAGEMAKER_PROGRAM=inference.py \
     SAGEMAKER_SUBMIT_DIRECTORY=/opt/ml/code \
     SAGEMAKER_CONTAINER_LOG_LEVEL=20 \
@@ -33,14 +31,14 @@ ENV SAGEMAKER_PROGRAM=inference.py \
     PATH="/opt/ml/code:${PATH}"
 # Create serve.sh in your project directory
 
-# # Create serve script
+# # # Create serve script
 # COPY test.py /opt/ml/code/test.py
 # RUN echo '#!/bin/bash\n\
 # python test.py' > /usr/local/bin/serve && \
 # chmod +x /usr/local/bin/serve
-# EXPOSE 8080
+EXPOSE 8080
 # # Set the entry point
 
-# ENTRYPOINT ["serve"]
+ENTRYPOINT ["python", "/opt/ml/code/inference.py"]
 
 
